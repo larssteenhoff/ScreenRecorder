@@ -17,9 +17,9 @@ The script builds in Release, assembles `build/Screen Recorder.app` and signs it
 1. Open `build/Screen Recorder.app`. The record icon appears in the menu bar; the app has no Dock icon. Open the app again while it runs to show the Export Presets window, for example when a menu bar manager hides the icon.
 2. Choose **Record <display>**, or **Record Window or App…** to pick with the system picker.
 3. The first recording asks for Screen Recording permission. Allow Screen Recorder in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen Screen Recorder.
-4. Choose **Stop Recording** to stop (⌘. while the menu is open). Recordings are saved as HEVC `.mov` files in `~/Movies/Screen Recorder`.
+4. Choose **Stop Recording** to stop (⌘. while the menu is open). Recordings are saved as HEVC files in `~/Movies/Screen Recorder`, as QuickTime (MOV) or MP4: choose with **Recording Format** in the menu.
 
-Menu options: System Audio, Microphone, Show Cursor, Frame Rate (24, 30, 60 fps).
+Menu options: System Audio, Microphone, Show Cursor, Recording Format (MOV or MP4), Frame Rate (24, 30, 60 fps).
 
 ## Export presets
 
@@ -36,3 +36,7 @@ Exports are written next to the recording as `<recording> - <preset>.<ext>`.
 ## Self-test
 
 `open -n "build/Screen Recorder.app" --args -selfTestSeconds 3 -selfTestReport /tmp/screenrecorder.txt` records the main display for 3 seconds, exports with the first preset, writes a report and quits. Quit the normal instance first.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

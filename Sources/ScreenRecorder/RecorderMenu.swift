@@ -54,6 +54,12 @@ struct RecorderMenu: View {
         Toggle("System Audio", isOn: $recorder.captureSystemAudio)
         Toggle("Microphone", isOn: $recorder.captureMicrophone)
         Toggle("Show Cursor", isOn: $recorder.showsCursor)
+        Picker("Recording Format", selection: $recorder.recordingFormat) {
+            ForEach(ExportContainer.allCases) { format in
+                Text(format.title).tag(format)
+            }
+        }
+        .disabled(recorder.isRecording)
         Picker("Frame Rate", selection: $recorder.frameRate) {
             ForEach(Recorder.frameRates, id: \.self) { rate in
                 Text("\(rate) fps").tag(rate)

@@ -16,7 +16,7 @@ enum RecorderError: LocalizedError {
     }
 }
 
-/// Records a display or a window to a .mov file in ~/Movies/Screen Recorder with ScreenCaptureKit,
+/// Records a display or a window to a .mov or .mp4 file in ~/Movies/Screen Recorder with ScreenCaptureKit,
 /// then exports it with the auto-export preset when one is set.
 @MainActor
 final class Recorder: NSObject, ObservableObject {
@@ -32,6 +32,7 @@ final class Recorder: NSObject, ObservableObject {
     @Published var captureMicrophone: Bool { didSet { defaults.set(captureMicrophone, forKey: Keys.microphone) } }
     @Published var showsCursor: Bool { didSet { defaults.set(showsCursor, forKey: Keys.cursor) } }
     @Published var frameRate: Int { didSet { defaults.set(frameRate, forKey: Keys.frameRate) } }
+    @Published var recordingFormat: ExportContainer { didSet { defaults.set(recordingFormat.rawValue, forKey: Keys.recordingFormat) } }
 
     static let frameRates = [24, 30, 60]
 
@@ -48,6 +49,7 @@ final class Recorder: NSObject, ObservableObject {
         static let microphone = "captureMicrophone"
         static let cursor = "showsCursor"
         static let frameRate = "frameRate"
+        static let recordingFormat = "recordingFormat"
     }
 
     init(presets: PresetStore) {
@@ -57,6 +59,7 @@ final class Recorder: NSObject, ObservableObject {
         captureMicrophone = defaults.bool(forKey: Keys.microphone)
         showsCursor = defaults.bool(forKey: Keys.cursor)
         frameRate = defaults.integer(forKey: Keys.frameRate)
+        recordingFormat = ExportContainer(rawValue: defaults.string(forKey: Keys.recordingFormat) ?? "") ?? .mov
         super.init()
         refreshDisplays()
         screenObserver = NotificationCenter.default.addObserver(
@@ -129,10 +132,10 @@ final class Recorder: NSObject, ObservableObject {
         configuration.excludesCurrentProcessAudio = true
         configuration.captureMicrophone = await microphoneAllowed()
 
-        let url = try Self.newRecordingURL()
+        let url = try Self.newRecordingURL(fileExtension: recordingFormat.fileExtension)
         let outputConfiguration = SCRecordingOutputConfiguration()
         outputConfiguration.outputURL = url
-        outputConfiguration.outputFileType = .mov
+        outputConfiguration.outputFileType = recordingFormat.fileType
         outputConfiguration.videoCodecType = .hevc
 
         let output = SCRecordingOutput(configuration: outputConfiguration, delegate: self)
@@ -270,16 +273,16 @@ final class Recorder: NSObject, ObservableObject {
         max(2, Int(value.rounded()) & ~1)
     }
 
-    private static func newRecordingURL() throws -> URL {
+    private static func newRecordingURL(fileExtension: String) throws -> URL {
         let folder = recordingsFolder
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
         let base = "Recording \(formatter.string(from: Date()))"
-        var url = folder.appendingPathComponent("\(base).mov")
+        var url = folder.appendingPathComponent("\(base).\(fileExtension)")
         var index = 2
         while FileManager.default.fileExists(atPath: url.path) {
-            url = folder.appendingPathComponent("\(base) \(index).mov")
+            url = folder.appendingPathComponent("\(base) \(index).\(fileExtension)")
             index += 1
         }
         return url
