@@ -15,11 +15,30 @@ struct ScreenRecorderApp: App {
     }
 }
 
-/// The menu bar icon: a filled record symbol while recording.
+/// The menu bar icon: a record symbol in the menu bar color; while recording, its dot is red.
 private struct MenuBarIcon: View {
     @ObservedObject var recorder: Recorder
 
     var body: some View {
-        Image(systemName: recorder.isRecording ? "record.circle.fill" : "record.circle")
+        Image(nsImage: recorder.isRecording ? Self.recordingImage : Self.idleImage)
     }
+
+    private static let symbolSize = NSImage.SymbolConfiguration(pointSize: 15, weight: .regular)
+
+    private static let idleImage: NSImage = {
+        let image = NSImage(systemSymbolName: "record.circle", accessibilityDescription: "Screen Recorder")!
+            .withSymbolConfiguration(symbolSize)!
+        image.isTemplate = true
+        return image
+    }()
+
+    /// Not a template image, so the menu bar keeps the red. The ring uses labelColor,
+    /// which resolves when the menu bar draws, so it matches light and dark menu bars.
+    private static let recordingImage: NSImage = {
+        let colors = NSImage.SymbolConfiguration(paletteColors: [.systemRed, .labelColor])
+        let image = NSImage(systemSymbolName: "record.circle", accessibilityDescription: "Screen Recorder, recording")!
+            .withSymbolConfiguration(symbolSize.applying(colors))!
+        image.isTemplate = false
+        return image
+    }()
 }

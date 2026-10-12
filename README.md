@@ -25,6 +25,7 @@ Menu options: System Audio, Microphone, Show Cursor, Recording Format (MOV or MP
 
 - **Export Last Recording** exports the last recording with one preset and shows the result in Finder.
 - **Auto-Export After Recording** exports each new recording with the chosen preset.
+- **Show in Finder After Recording** (on by default) brings Finder to the front with the new recording selected.
 - **Export Presets…** opens the editor (⌘, while the menu is open). A preset has a name, a quality (native resolution as an original copy with no re-encode, HEVC, H.264 or ProRes; or HEVC or H.264 at 4K, 1080p or 720p), a format (MP4 or MOV) and an audio switch. ProRes always exports as MOV.
 
 Exports are written next to the recording as `<recording> - <preset>.<ext>`.

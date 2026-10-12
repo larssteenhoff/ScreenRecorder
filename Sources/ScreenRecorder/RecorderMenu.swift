@@ -85,5 +85,6 @@ struct RecorderMenu: View {
                 Text(preset.name).tag(UUID?.some(preset.id))
             }
         }
+        Toggle("Show in Finder After Recording", isOn: $recorder.revealAfterRecording)
     }
 }

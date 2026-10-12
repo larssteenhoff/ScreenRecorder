@@ -33,6 +33,7 @@ final class Recorder: NSObject, ObservableObject {
     @Published var showsCursor: Bool { didSet { defaults.set(showsCursor, forKey: Keys.cursor) } }
     @Published var frameRate: Int { didSet { defaults.set(frameRate, forKey: Keys.frameRate) } }
     @Published var recordingFormat: ExportContainer { didSet { defaults.set(recordingFormat.rawValue, forKey: Keys.recordingFormat) } }
+    @Published var revealAfterRecording: Bool { didSet { defaults.set(revealAfterRecording, forKey: Keys.revealAfterRecording) } }
 
     static let frameRates = [24, 30, 60]
 
@@ -50,16 +51,18 @@ final class Recorder: NSObject, ObservableObject {
         static let cursor = "showsCursor"
         static let frameRate = "frameRate"
         static let recordingFormat = "recordingFormat"
+        static let revealAfterRecording = "revealAfterRecording"
     }
 
     init(presets: PresetStore) {
         self.presets = presets
-        defaults.register(defaults: [Keys.systemAudio: true, Keys.microphone: false, Keys.cursor: true, Keys.frameRate: 60])
+        defaults.register(defaults: [Keys.systemAudio: true, Keys.microphone: false, Keys.cursor: true, Keys.frameRate: 60, Keys.revealAfterRecording: true])
         captureSystemAudio = defaults.bool(forKey: Keys.systemAudio)
         captureMicrophone = defaults.bool(forKey: Keys.microphone)
         showsCursor = defaults.bool(forKey: Keys.cursor)
         frameRate = defaults.integer(forKey: Keys.frameRate)
         recordingFormat = ExportContainer(rawValue: defaults.string(forKey: Keys.recordingFormat) ?? "") ?? .mov
+        revealAfterRecording = defaults.bool(forKey: Keys.revealAfterRecording)
         super.init()
         refreshDisplays()
         screenObserver = NotificationCenter.default.addObserver(
@@ -171,6 +174,9 @@ final class Recorder: NSObject, ObservableObject {
         startDate = nil
         guard FileManager.default.fileExists(atPath: url.path) else { return }
         lastRecording = url
+        if revealAfterRecording {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
         if let preset = presets.autoExportPreset {
             export(with: preset)
         }
