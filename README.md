@@ -14,7 +14,7 @@ The script builds in Release, assembles `build/Screen Recorder.app` and signs it
 
 ## Use
 
-1. Open `build/Screen Recorder.app`. The record icon appears in the menu bar; the app has no Dock icon.
+1. Open `build/Screen Recorder.app`. The record icon appears in the menu bar; the app has no Dock icon. Open the app again while it runs to show the Export Presets window, for example when a menu bar manager hides the icon.
 2. Choose **Record <display>**, or **Record Window or App…** to pick with the system picker.
 3. The first recording asks for Screen Recording permission. Allow Screen Recorder in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen Screen Recorder.
 4. Choose **Stop Recording** to stop (⌘. while the menu is open). Recordings are saved as HEVC `.mov` files in `~/Movies/Screen Recorder`.
